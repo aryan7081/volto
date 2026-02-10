@@ -264,11 +264,9 @@ const BlocksForm = (props) => {
   // to be removed when the user saves the page next. Otherwise the invalid
   // blocks would linger for ever.
 
-  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
-  const blocksFieldname = getBlocksFieldname(properties);
-  for (const id of properties?.[blocksLayoutFieldname]?.items || []) {
-    if (!properties?.[blocksFieldname]?.[id]) {
-      const newFormData = deleteBlock(properties, id, intl);
+  for (const [n, v] of blockList) {
+    if (!v) {
+      const newFormData = deleteBlock(properties, n, intl);
       onChangeFormData(newFormData);
     }
   }
