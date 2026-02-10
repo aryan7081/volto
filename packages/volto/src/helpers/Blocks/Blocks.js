@@ -85,7 +85,7 @@ export function blockHasValue(data) {
  * @param {*} id Block id
  * @return {boolean}
  */
-const isValidBlockId = (id) =>
+export const isValidBlockId = (id) =>
   id != null && id !== 'undefined' && (typeof id !== 'string' || id.length > 0);
 
 /**
