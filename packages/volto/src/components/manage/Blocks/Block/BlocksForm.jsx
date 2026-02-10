@@ -8,6 +8,7 @@ import {
   getBlocks,
   getBlocksFieldname,
   getBlocksLayoutFieldname,
+  isValidBlockId,
   applyBlockDefaults,
   getBlocksHierarchy,
   addBlock,
@@ -260,13 +261,15 @@ const BlocksForm = (props) => {
   const editBlockWrapper = children || defaultBlockWrapper;
 
   // Remove invalid blocks on saving
-  // Note they are alreaady filtered by DragDropList, but we also want them
-  // to be removed when the user saves the page next. Otherwise the invalid
-  // blocks would linger for ever.
-
-  for (const [n, v] of blockList) {
-    if (!v) {
-      const newFormData = deleteBlock(properties, n, intl);
+  // Note they are already filtered from blockList by getBlocks(), but we still
+  // need to remove layout items that have no block data so they don't linger.
+  const blocksFieldName = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+  const blocks = properties?.[blocksFieldName] ?? {};
+  const layoutItems = properties?.[blocksLayoutFieldname]?.items ?? [];
+  for (const id of layoutItems) {
+    if (isValidBlockId(id) && blocks[id] == null) {
+      const newFormData = deleteBlock(properties, id, intl);
       onChangeFormData(newFormData);
     }
   }
