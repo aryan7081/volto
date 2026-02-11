@@ -8,7 +8,7 @@ import {
   getBlocks,
   getBlocksFieldname,
   getBlocksLayoutFieldname,
-  isValidBlockId,
+  getInvalidBlockLayoutIds,
   applyBlockDefaults,
   getBlocksHierarchy,
   addBlock,
@@ -263,15 +263,9 @@ const BlocksForm = (props) => {
   // Remove invalid blocks on saving
   // Note they are already filtered from blockList by getBlocks(), but we still
   // need to remove layout items that have no block data so they don't linger.
-  const blocksFieldName = getBlocksFieldname(properties);
-  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
-  const blocks = properties?.[blocksFieldName] ?? {};
-  const layoutItems = properties?.[blocksLayoutFieldname]?.items ?? [];
-  for (const id of layoutItems) {
-    if (isValidBlockId(id) && blocks[id] == null) {
-      const newFormData = deleteBlock(properties, id, intl);
-      onChangeFormData(newFormData);
-    }
+  for (const id of getInvalidBlockLayoutIds(properties)) {
+    const newFormData = deleteBlock(properties, id, intl);
+    onChangeFormData(newFormData);
   }
 
   useEvent('voltoClickBelowContent', () => {
