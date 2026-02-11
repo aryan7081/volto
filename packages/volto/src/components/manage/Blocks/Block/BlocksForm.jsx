@@ -260,7 +260,10 @@ const BlocksForm = (props) => {
 
   const editBlockWrapper = children || defaultBlockWrapper;
 
-  // Remove invalid blocks on save: layout items that have no block data.
+  // Remove invalid blocks on saving
+  // Note they are already filtered by DragDropList, but we also want them
+  // to be removed when the user saves the page next. Otherwise the invalid
+  // blocks would linger for ever.
   useEffect(() => {
     const invalidBlockIds = getInvalidBlockLayoutIds(properties);
     if (invalidBlockIds.length === 0) return;
