@@ -85,7 +85,7 @@ export function blockHasValue(data) {
  * @param {*} id Block id
  * @return {boolean}
  */
-export const isValidBlockId = (id) =>
+const isValidBlockId = (id) =>
   id != null && id !== 'undefined' && (typeof id !== 'string' || id.length > 0);
 
 /**
@@ -104,6 +104,19 @@ export const getBlocks = (properties) => {
     .filter((n) => isValidBlockId(n))
     .map((n) => [n, blocks?.[n]])
     .filter(([, block]) => block != null);
+};
+
+/**
+ * Get layout item IDs that are valid but have no block data (orphaned refs).
+ * @param {Object} properties Content form properties
+ * @return {string[]} IDs that should be removed from layout
+ */
+export const getInvalidBlockLayoutIds = (properties) => {
+  const blocksFieldName = getBlocksFieldname(properties);
+  const blocksLayoutFieldName = getBlocksLayoutFieldname(properties);
+  const blocks = properties?.[blocksFieldName] ?? {};
+  const layoutItems = properties?.[blocksLayoutFieldName]?.items ?? [];
+  return layoutItems.filter((id) => isValidBlockId(id) && blocks[id] == null);
 };
 
 /**
