@@ -260,13 +260,16 @@ const BlocksForm = (props) => {
 
   const editBlockWrapper = children || defaultBlockWrapper;
 
-  // Remove invalid blocks on saving
-  // Note they are already filtered from blockList by getBlocks(), but we still
-  // need to remove layout items that have no block data so they don't linger.
-  for (const id of getInvalidBlockLayoutIds(properties)) {
-    const newFormData = deleteBlock(properties, id, intl);
+  // Remove invalid blocks on save: layout items that have no block data.
+  useEffect(() => {
+    const invalidBlockIds = getInvalidBlockLayoutIds(properties);
+    if (invalidBlockIds.length === 0) return;
+    let newFormData = properties;
+    for (const id of invalidBlockIds) {
+      newFormData = deleteBlock(newFormData, id, intl);
+    }
     onChangeFormData(newFormData);
-  }
+  }, [properties, intl, onChangeFormData]);
 
   useEvent('voltoClickBelowContent', () => {
     if (!config.experimental.addBlockButton.enabled || !isMainForm) return;

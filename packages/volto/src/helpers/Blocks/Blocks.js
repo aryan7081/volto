@@ -85,7 +85,7 @@ export function blockHasValue(data) {
  * @param {*} id Block id
  * @return {boolean}
  */
-export const isValidBlockId = (id) =>
+const isValidBlockId = (id) =>
   id != null && id !== 'undefined' && (typeof id !== 'string' || id.length > 0);
 
 /**
@@ -113,10 +113,10 @@ export const getBlocks = (properties) => {
  */
 export const getInvalidBlockLayoutIds = (properties) => {
   const blocksFieldName = getBlocksFieldname(properties);
-  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+  const blocksLayoutFieldName = getBlocksLayoutFieldname(properties);
   const blocks = properties?.[blocksFieldName] ?? {};
-  const items = properties?.[blocksLayoutFieldname]?.items ?? [];
-  return items.filter((id) => isValidBlockId(id) && blocks[id] == null);
+  const layoutItems = properties?.[blocksLayoutFieldName]?.items ?? [];
+  return layoutItems.filter((id) => isValidBlockId(id) && blocks[id] == null);
 };
 
 /**
