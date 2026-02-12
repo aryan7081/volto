@@ -1,0 +1,1 @@
+Fix Delete at end of block merging with next block: use single form update (onChangeFormData when available) and defer apply so it runs after Slate's onChange, ensuring the next block is removed and Cypress tests pass reliably. @aryan7081

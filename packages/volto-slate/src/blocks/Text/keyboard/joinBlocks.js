@@ -178,7 +178,12 @@ export function joinWithNextBlock({ editor, event }, intl) {
     plaintext: serializeNodesToText(combined || []),
   });
   const newFormData = deleteBlock(formData, otherBlockId, intl);
-  ReactDOM.unstable_batchedUpdates(() => applyFormUpdate(newFormData));
+
+  // Defer so our update runs after Slate's onChange (from the merge transforms)
+  // and is the last form update, ensuring the next block is removed.
+  setTimeout(() => {
+    ReactDOM.unstable_batchedUpdates(() => applyFormUpdate(newFormData));
+  }, 0);
   return true;
 }
 
