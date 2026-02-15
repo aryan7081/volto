@@ -118,8 +118,7 @@ export function joinWithNextBlock({ editor, event }, intl) {
     data,
   } = blockProps;
 
-  const { properties, onChangeField, onChangeFormData } =
-    editor.getBlockProps();
+  const { properties, onChangeField } = editor.getBlockProps();
   const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
 
   if (!otherBlockId) {
@@ -129,16 +128,16 @@ export function joinWithNextBlock({ editor, event }, intl) {
   // Don't join with required blocks
   if (data?.required || otherBlock?.required) return;
 
-  // If next block is not a slate text block, do nothing (don't consume the event)
-  if (otherBlock['@type'] !== 'slate') {
-    return false;
-  }
-
   event.stopPropagation();
   event.preventDefault();
 
   const blocksFieldname = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  // If next block is not a slate text block, do nothing
+  if (otherBlock['@type'] !== 'slate') {
+    return;
+  }
 
   const nextValue = otherBlock?.value;
   const nextPlaintext =
@@ -151,19 +150,13 @@ export function joinWithNextBlock({ editor, event }, intl) {
     !nextPlaintext ||
     nextPlaintext.trim().length === 0;
 
-  const applyFormUpdate = (newFormData) => {
-    if (onChangeFormData) {
-      onChangeFormData(newFormData);
-    } else {
-      onChangeField(blocksFieldname, newFormData[blocksFieldname]);
-      onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
-    }
-    onSelectBlock(block);
-  };
-
   if (isEmptySlateBlock) {
     const newFormData = deleteBlock(properties, otherBlockId, intl);
-    ReactDOM.unstable_batchedUpdates(() => applyFormUpdate(newFormData));
+    ReactDOM.unstable_batchedUpdates(() => {
+      onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+      onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+      onSelectBlock(block);
+    });
     return true;
   }
 
@@ -178,12 +171,11 @@ export function joinWithNextBlock({ editor, event }, intl) {
     plaintext: serializeNodesToText(combined || []),
   });
   const newFormData = deleteBlock(formData, otherBlockId, intl);
-
-  // Defer so our update runs after Slate's onChange (from the merge transforms)
-  // and is the last form update, ensuring the next block is removed.
-  setTimeout(() => {
-    ReactDOM.unstable_batchedUpdates(() => applyFormUpdate(newFormData));
-  }, 0);
+  ReactDOM.unstable_batchedUpdates(() => {
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(block);
+  });
   return true;
 }
 
