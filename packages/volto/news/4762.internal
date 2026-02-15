@@ -1,2 +1,0 @@
-Add Cypress test coverage for URL widgets preserving template variables like ${portal_url} and ${navigation_root_url}. @aryan7081
-

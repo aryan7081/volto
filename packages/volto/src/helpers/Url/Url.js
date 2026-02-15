@@ -320,6 +320,9 @@ export const getFieldURL = (data) => {
   return url;
 };
 
+// Template variables like ${portal_url} or ${navigation_root_url} (valid identifier names)
+const TEMPLATE_VARIABLE_REGEX = /\$\{[a-zA-Z_][a-zA-Z0-9_]*\}/;
+
 /**
  * Check if URL contains template variables that should be preserved
  * @method hasTemplateVariables
@@ -327,9 +330,7 @@ export const getFieldURL = (data) => {
  * @returns {boolean} True if URL contains template variables
  */
 export function hasTemplateVariables(url) {
-  if (!url || typeof url !== 'string') return false;
-  // Check for template variables like ${portal_url} or ${navigation_root_url}
-  return /\$\{[^}]+\}/.test(url);
+  return typeof url === 'string' && TEMPLATE_VARIABLE_REGEX.test(url);
 }
 
 /**
