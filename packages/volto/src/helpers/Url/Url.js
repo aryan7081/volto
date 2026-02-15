@@ -330,6 +330,7 @@ const TEMPLATE_VARIABLE_REGEX = /\$\{[a-zA-Z_][a-zA-Z0-9_]*\}/;
  * @returns {boolean} True if URL contains template variables
  */
 export function hasTemplateVariables(url) {
+  // Check for template variables like ${portal_url} or ${navigation_root_url}
   return typeof url === 'string' && TEMPLATE_VARIABLE_REGEX.test(url);
 }
 
